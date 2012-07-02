@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "gcm"
   gem.homepage = "http://github.com/leobessa/gcm"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Sends push notifications to Android devices.}
+  gem.description = %Q{gcm sends push notifications to Android devices via google GCM}
   gem.email = "leobessa@gmail.com"
   gem.authors = ["Leonardo Bessa"]
   # dependencies defined in Gemfile
