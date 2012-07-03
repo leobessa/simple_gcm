@@ -28,7 +28,7 @@ module GCM
     def response_values(env)
       body = env[:body]
       base = {:status => env[:status], :headers => env[:response_headers], :body => body}
-      response_body = body.lines.map{ |l| Hash[l.scan(/(.*)=(.*)/)] }.inject(&:merge).inject({}) do |m,(k,v)|
+      response_body = Array(body.lines.map{ |l| Hash[l.scan(/(.*)=(.*)/)] }.inject(&:merge)).inject({}) do |m,(k,v)|
         m[k.downcase.to_sym] = v
         m
       end

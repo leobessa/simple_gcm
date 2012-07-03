@@ -31,4 +31,5 @@ class GCM::Sender
       faraday.use GCM::ResponseMiddleware
     end
   end
+
 end
