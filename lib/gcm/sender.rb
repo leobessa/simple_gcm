@@ -8,8 +8,10 @@ class GCM::Sender
     @api_key = options.delete(:api_key)
   end
 
-  def send(message)
-    http_parameters = { :registration_id => message.registration_id }
+  def send(options)
+    registration_id = options.delete(:registration_id)
+    message         = options.delete(:message)
+    http_parameters = { :registration_id => registration_id }
     message.data.each_pair do |k,v|
       http_parameters["data.#{k}"] = v.to_s
     end

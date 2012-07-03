@@ -1,10 +1,11 @@
 class GCM::Message
-  ATTRIBUTES = [:registration_id, :data, :collapse_key, :delay_while_idle, :time_to_live].freeze
+  ATTRIBUTES = [:data, :collapse_key, :delay_while_idle, :time_to_live].freeze
   ATTRIBUTES.each do |attr|
     attr_accessor attr
   end
 
-  def initialize(args)
+  def initialize(args = {})
+    @data = {}
     ATTRIBUTES.each do |attr|
       if (args.key?(attr))
         instance_variable_set("@#{attr}", args[attr])
