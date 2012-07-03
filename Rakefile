@@ -14,11 +14,11 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "gcm"
-  gem.homepage = "http://github.com/leobessa/gcm"
+  gem.name = "simple_gcm"
+  gem.homepage = "http://github.com/leobessa/simple_gcm"
   gem.license = "MIT"
   gem.summary = %Q{Sends push notifications to Android devices.}
-  gem.description = %Q{gcm sends push notifications to Android devices via google GCM}
+  gem.description = %Q{simple_gcm sends push notifications to Android devices via google GCM}
   gem.email = "leobessa@gmail.com"
   gem.authors = ["Leonardo Bessa"]
   # dependencies defined in Gemfile
@@ -43,7 +43,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "gcm #{version}"
+  rdoc.title = "simple_gcm #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

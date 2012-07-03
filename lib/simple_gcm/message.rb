@@ -1,4 +1,4 @@
-class GCM::Message
+class SimpleGCM::Message
   ATTRIBUTES = [:data, :collapse_key, :delay_while_idle, :time_to_live].freeze
   ATTRIBUTES.each do |attr|
     attr_accessor attr

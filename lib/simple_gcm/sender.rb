@@ -1,4 +1,4 @@
-class GCM::Sender
+class SimpleGCM::Sender
   BASE_ENDPOINT_URL = 'https://android.googleapis.com'
   SEND_PATH = '/gcm/send'
 
@@ -30,7 +30,7 @@ class GCM::Sender
     @connection ||= ::Faraday.new(:url => BASE_ENDPOINT_URL) do |faraday|
       faraday.request  :url_encoded             # form-encode POST params
       faraday.adapter  ::Faraday.default_adapter  # make requests with Net::HTTP
-      faraday.use GCM::ResultMiddleware
+      faraday.use SimpleGCM::ResultMiddleware
     end
   end
 

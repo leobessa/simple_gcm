@@ -1,4 +1,4 @@
-module GCM::Error
+module SimpleGCM::Error
   class BaseError < StandardError
     attr_reader :response
 

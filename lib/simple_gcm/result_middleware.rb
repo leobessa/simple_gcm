@@ -1,4 +1,4 @@
-module GCM
+module SimpleGCM
   class ResultMiddleware < ::Faraday::Response::Middleware
     def on_complete(env)
       case env[:status]

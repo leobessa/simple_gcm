@@ -6,7 +6,7 @@
 # case, the server should update the registration id to avoid rejected requests
 # in the future.
 
-class GCM::Result
+class SimpleGCM::Result
   attr_accessor :message_id, :registration_id
   def inspect
     { message_id: message_id, registration_id: registration_id }

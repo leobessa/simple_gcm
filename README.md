@@ -1,11 +1,11 @@
 # gcm (Google Cloud Messaging)
 
-gcm sends push notifications to Android devices via google [gcm](http://developer.android.com/guide/google/gcm/index.html).
+simple_gcm sends push notifications to Android devices via google [gcm](http://developer.android.com/guide/google/gcm/index.html).
 
 ##Installation
 
 ```console
-$ gem install gcm
+$ gem install simple_gcm
 ```
 
 ##Requirements
@@ -17,21 +17,21 @@ An Android device running 2.2 or newer, its registration token, and a google API
 Sending one notification at a time:
 
 ```ruby
-require 'gcm'
-sender  = GCM::Sender.new(api_key: "your_api_key")
-message = GCM::Message.new(:data => {alert => "your message"})
+require 'simple_gcm'
+sender  = SimpleGCM::Sender.new(api_key: "your_api_key")
+message = SimpleGCM::Message.new(:data => {alert => "your message"})
 begin
   result  = sender.send(:registration_id => "your_phone_registration_id", :message => message)
   puts result.message_id
   puts result.registration_id
-rescue GCM::Error::MissingRegistration => e; puts e
-rescue GCM::Error::InvalidRegistration => e; puts e
-rescue GCM::Error::MismatchSenderId => e; puts e
-rescue GCM::Error::NotRegistered => e; puts e
-rescue GCM::Error::MessageTooBig => e; puts e
-rescue GCM::Error::AuthenticationError => e; puts e
-rescue GCM::Error::ServerUnavailable => e; puts e
-rescue GCM::Error::Unkown => e; puts e
+rescue SimpleGCM::Error::MissingRegistration => e; puts e
+rescue SimpleGCM::Error::InvalidRegistration => e; puts e
+rescue SimpleGCM::Error::MismatchSenderId => e; puts e
+rescue SimpleGCM::Error::NotRegistered => e; puts e
+rescue SimpleGCM::Error::MessageTooBig => e; puts e
+rescue SimpleGCM::Error::AuthenticationError => e; puts e
+rescue SimpleGCM::Error::ServerUnavailable => e; puts e
+rescue SimpleGCM::Error::Unkown => e; puts e
 rescue Exception => e
 end
 ```
