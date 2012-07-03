@@ -25,7 +25,13 @@ Gem::Specification.new do |s|
     "README.md",
     "Rakefile",
     "VERSION",
-    "gcm.gemspec",
+    "lib/simple_gcm.rb",
+    "lib/simple_gcm/error.rb",
+    "lib/simple_gcm/message.rb",
+    "lib/simple_gcm/result.rb",
+    "lib/simple_gcm/result_middleware.rb",
+    "lib/simple_gcm/sender.rb",
+    "simple_gcm.gemspec",
     "spec/gcm_spec.rb",
     "spec/spec_helper.rb"
   ]
