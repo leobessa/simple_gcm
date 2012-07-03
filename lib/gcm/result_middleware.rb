@@ -1,5 +1,5 @@
 module GCM
-  class ResponseMiddleware < ::Faraday::Response::Middleware
+  class ResultMiddleware < ::Faraday::Response::Middleware
     def on_complete(env)
       case env[:status]
       when 200
@@ -11,10 +11,10 @@ module GCM
             raise Error::Unkown, values
           end
         else
-          response = Response.new
-          response.message_id = values[:id] if values[:id]
-          response.registration_id = values[:registration_id] if values[:registration_id]
-          env[:gcm_response] = response
+          result = Result.new
+          result.message_id = values[:id] if values[:id]
+          result.registration_id = values[:registration_id] if values[:registration_id]
+          env[:gcm_result] = result
         end
       when 401
         raise Error::AuthenticationError, response_values(env)

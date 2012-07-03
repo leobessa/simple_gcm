@@ -21,14 +21,14 @@ class GCM::Sender
       req.headers['Authorization'] = "key=#{api_key}"
       req.params = http_parameters
     end
-    response.env[:gcm_response]
+    response.env[:gcm_result]
   end
 
   def connection
     @connection ||= ::Faraday.new(:url => BASE_ENDPOINT_URL) do |faraday|
       faraday.request  :url_encoded             # form-encode POST params
       faraday.adapter  ::Faraday.default_adapter  # make requests with Net::HTTP
-      faraday.use GCM::ResponseMiddleware
+      faraday.use GCM::ResultMiddleware
     end
   end
 
