@@ -56,14 +56,43 @@ describe "SimpleGCM::Sender" do
           "results" => [
             { "message_id" => "1:08" }
           ]
-        }.to_json
-        reponse_stub = build_response_stub([200, {"Content-Type" => "application/json"}, body])
-        multicast = subject.multicast(:to => "fake_registration_id", :message => SimpleGCM::Message.new, &reponse_stub)
-        multicast.success.should == 1
-        multicast.failure.should == 0
-        multicast.canonical_ids.should == 0
-        multicast.results.should == [{ :message_id => "1:08" }]
+          }.to_json
+          reponse_stub = build_response_stub([200, {"Content-Type" => "application/json"}, body])
+          multicast = subject.multicast(:to => "fake_registration_id", :message => SimpleGCM::Message.new, &reponse_stub)
+          multicast.success.should == 1
+          multicast.failure.should == 0
+          multicast.canonical_ids.should == 0
+          multicast.results.should == [{ :message_id => "1:08" }]
+        end
+        it "returns a SimpleGCM::Multicast with response content and errors" do
+          message_id = "1:08"
+          body = { "multicast_id" => 216,
+            "success" => 3,
+            "failure" => 3,
+            "canonical_ids" => 1,
+            "results" => [
+              { "message_id" => "1:0408" },
+              { "error" => "Unavailable" },
+              { "error" => "InvalidRegistration" },
+              { "message_id" => "1:1516" },
+              { "message_id" => "1:2342", "registration_id" => "32" },
+              { "error" => "NotRegistered"}
+            ]
+            }.to_json
+            reponse_stub = build_response_stub([200, {"Content-Type" => "application/json"}, body])
+            multicast = subject.multicast(:to => %w(a b c), :message => SimpleGCM::Message.new, &reponse_stub)
+            multicast.success.should == 3
+            multicast.failure.should == 3
+            multicast.canonical_ids.should == 1
+            multicast.results.should == [{ :message_id => "1:0408" },
+              { :error => "Unavailable" },
+              { :error => "InvalidRegistration" },
+              { :message_id => "1:1516" },
+              { :message_id => "1:2342", :registration_id => "32" },
+              { :error => "NotRegistered"}
+            ]
+        end
       end
-    end
+
   end
 end
