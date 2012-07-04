@@ -1,9 +1,6 @@
 module SimpleGCM
   class MulticastResultMiddleware < ::Faraday::Response::Middleware
     def on_complete(env)
-      results = {}
-      unsent_reg_ids = []
-      multicast_ids  = []
       case env[:status]
       when 200
         env[:gcm_multicast_result] = MulticastResult.new(symbolize_keys(env[:body] || {}))
