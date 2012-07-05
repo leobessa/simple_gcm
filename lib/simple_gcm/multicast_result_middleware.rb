@@ -5,6 +5,7 @@ module SimpleGCM
       when 200
         env[:gcm_multicast_result] = MulticastResult.new(JSON.parse(env[:body],:symbolize_names => true))
       when 400
+        puts env
         raise Error::BadRequest, response_values(env)
       when 401
         raise Error::AuthenticationError, response_values(env)
