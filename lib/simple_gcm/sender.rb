@@ -1,12 +1,21 @@
+require 'forwardable'
+
 module SimpleGCM
   class Sender
     BASE_ENDPOINT_URL = 'https://android.googleapis.com'
     SEND_PATH = '/gcm/send'
+    extend Forwardable
 
     attr_accessor :api_key
 
+    def_delegators :@logger, :debug, :info, :warn, :error, :fatal
+
     def initialize(options)
       @api_key = options.delete(:api_key)
+      @logger = logger || begin
+        require 'logger'
+        ::Logger.new(STDOUT)
+      end
     end
 
     def send(options)
@@ -47,6 +56,7 @@ module SimpleGCM
           req.headers['Content-Type']  = 'application/json'
           req.headers['Authorization'] = "key=#{api_key}"
           req.body = http_body.to_json
+          debug('GCM request') { req.body }
         end
         response.env[:gcm_multicast_result]
       rescue Error::ServerUnavailable => e
