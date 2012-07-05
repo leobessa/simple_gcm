@@ -78,7 +78,6 @@ module SimpleGCM
       conn.tap do |faraday|
         faraday.adapter  http_adapter
         faraday.use SimpleGCM::MulticastResultMiddleware
-        faraday.response :json, :content_type => /\bjson$/
       end
     end
 

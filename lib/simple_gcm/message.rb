@@ -1,16 +1,14 @@
 class SimpleGCM::Message
   ATTRIBUTES = [:data, :collapse_key, :delay_while_idle, :time_to_live].freeze
-  ATTRIBUTES.each do |attr|
-    attr_accessor attr
-  end
+  attr_accessor *ATTRIBUTES
 
   def initialize(args = {})
-    @data = {}
     ATTRIBUTES.each do |attr|
       if (args.key?(attr))
         instance_variable_set("@#{attr}", args[attr])
       end
     end
+    @data ||= {}
   end
 
   def inspect

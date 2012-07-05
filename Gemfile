@@ -7,10 +7,8 @@ source "http://rubygems.org"
 # Include everything needed to run rake, tests, features, etc.
 group :development do
   gem "rspec", "~> 2.10.0"
-  gem "rdoc", "~> 3.12"
-  gem "bundler", "~> 1.1.4"
+  gem "bundler"
   gem "jeweler", "~> 1.8.4"
 end
 
 gem "faraday"
-gem "faraday_middleware"

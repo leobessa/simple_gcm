@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Leonardo Bessa"]
-  s.date = "2012-07-03"
+  s.date = "2012-07-05"
   s.description = "simple_gcm sends push notifications to Android devices via google GCM"
   s.email = "leobessa@gmail.com"
   s.extra_rdoc_files = [
@@ -28,6 +28,8 @@ Gem::Specification.new do |s|
     "lib/simple_gcm.rb",
     "lib/simple_gcm/error.rb",
     "lib/simple_gcm/message.rb",
+    "lib/simple_gcm/multicast_result.rb",
+    "lib/simple_gcm/multicast_result_middleware.rb",
     "lib/simple_gcm/result.rb",
     "lib/simple_gcm/result_middleware.rb",
     "lib/simple_gcm/sender.rb",
@@ -47,21 +49,18 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<faraday>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.10.0"])
-      s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.1.4"])
+      s.add_development_dependency(%q<bundler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
     else
       s.add_dependency(%q<faraday>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 2.10.0"])
-      s.add_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_dependency(%q<bundler>, ["~> 1.1.4"])
+      s.add_dependency(%q<bundler>, [">= 0"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
     end
   else
     s.add_dependency(%q<faraday>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 2.10.0"])
-    s.add_dependency(%q<rdoc>, ["~> 3.12"])
-    s.add_dependency(%q<bundler>, ["~> 1.1.4"])
+    s.add_dependency(%q<bundler>, [">= 0"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
   end
 end
