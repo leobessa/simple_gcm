@@ -29,6 +29,7 @@ module SimpleGCM::Error
       %(#<#{self.class}>)
     end
   end
+  class BadRequest < BaseError; end
   class MissingRegistration < BaseError; end
   class InvalidRegistration < BaseError; end
   class MismatchSenderId < BaseError; end
