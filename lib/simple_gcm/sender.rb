@@ -12,7 +12,7 @@ module SimpleGCM
 
     def initialize(options)
       @api_key = options.delete(:api_key)
-      @logger = logger || begin
+      @logger  = options.delete(:logger) || begin
         require 'logger'
         ::Logger.new(STDOUT)
       end
