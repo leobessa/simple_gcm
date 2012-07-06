@@ -1,21 +1,15 @@
-require 'forwardable'
+require 'json'
 
 module SimpleGCM
   class Sender
     BASE_ENDPOINT_URL = 'https://android.googleapis.com'
     SEND_PATH = '/gcm/send'
-    extend Forwardable
 
     attr_accessor :api_key
-
-    def_delegators :@logger, :debug, :info, :warn, :error, :fatal
+    attr_writer :connection_maker
 
     def initialize(options)
       @api_key = options.delete(:api_key)
-      @logger  = options.delete(:logger) || begin
-        require 'logger'
-        ::Logger.new(STDOUT)
-      end
     end
 
     def send(options)
@@ -28,11 +22,7 @@ module SimpleGCM
       http_parameters[:collapse_key] = message.collapse_key if message.collapse_key
       http_parameters[:delay_while_idle] = "1" if message.delay_while_idle
       http_parameters[:time_to_live] = message.time_to_live if message.time_to_live
-      connection = options.fetch(:connection) { default_connection }.tap do |c|
-        wrap_unicast(c)
-        yield c if block_given?
-      end
-      response = connection.post SEND_PATH do |req|
+      response = unicast_connection.post SEND_PATH do |req|
         req.headers['Authorization'] = "key=#{api_key}"
         req.params = http_parameters
       end
@@ -47,16 +37,11 @@ module SimpleGCM
       http_body[:collapse_key] = message.collapse_key if message.collapse_key
       http_body[:delay_while_idle] = "1" if message.delay_while_idle
       http_body[:time_to_live] = message.time_to_live if message.time_to_live
-      connection = options.fetch(:connection) { default_connection }.tap do |c|
-        wrap_multicast(c)
-        yield c if block_given?
-      end
       begin
-        response = connection.post SEND_PATH do |req|
+        response = multicast_connection.post SEND_PATH do |req|
           req.headers['Content-Type']  = 'application/json'
           req.headers['Authorization'] = "key=#{api_key}"
           req.body = http_body.to_json
-          debug('GCM request') { req.body }
         end
         response.env[:gcm_multicast_result]
       rescue Error::ServerUnavailable => e
@@ -66,28 +51,22 @@ module SimpleGCM
       end
     end
 
-    def http_adapter
-      @http_adapter ||= ::Faraday.default_adapter  # make requests with Net::HTTP
-    end
-
     private
 
-    def default_connection
-      @default_connection ||= ::Faraday.new(:url => BASE_ENDPOINT_URL)
+    def connection_maker
+      @connection_maker ||= ::Faraday.public_method(:new)
     end
 
-    def wrap_unicast(conn)
-      conn.tap  do |faraday|
-        faraday.request  :url_encoded             # form-encode POST params
-        faraday.adapter  http_adapter
-        faraday.use SimpleGCM::ResultMiddleware
+    def unicast_connection
+      @unicast_connection ||= connection_maker.call(:url => BASE_ENDPOINT_URL).tap  do |c|
+        c.request  :url_encoded             # form-encode POST params
+        c.use SimpleGCM::ResultMiddleware
       end
     end
 
-    def wrap_multicast(conn)
-      conn.tap do |faraday|
-        faraday.adapter  http_adapter
-        faraday.use SimpleGCM::MulticastResultMiddleware
+    def multicast_connection
+      @multicast_connection ||= connection_maker.call(:url => BASE_ENDPOINT_URL).tap  do |c|
+        c.use SimpleGCM::MulticastResultMiddleware
       end
     end
 

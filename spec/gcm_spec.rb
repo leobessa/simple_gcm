@@ -2,10 +2,12 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "SimpleGCM::Sender" do
   subject { SimpleGCM::Sender.new(api_key: "fake_api_key") }
-  def build_response_stub(response)
-    lambda do |c|
-      c.builder.adapter :test do |stub|
-        stub.post('/gcm/send') {  response }
+  def stub_response(response)
+    subject.connection_maker = lambda do |options|
+      ::Faraday.new(options).tap do |c|
+        c.builder.adapter :test do |stub|
+          stub.post('/gcm/send') {  response }
+        end
       end
     end
   end
@@ -13,13 +15,15 @@ describe "SimpleGCM::Sender" do
     context "The message is processed successfully" do
       it "returns a SimpleGCM::Response with message_id" do
         message_id = "1:08"
-        reponse = subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new, &build_response_stub([200, {}, "id=#{message_id}"])) 
+        stub_response([200, {}, "id=#{message_id}"])
+        reponse = subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new) 
         reponse.message_id.should == message_id
       end
       it "returns a SimpleGCM::Response with message_id and registration_id" do
         message_id = "1:2342"
         registration_id = "32"
-        reponse = subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new, &build_response_stub([200, {}, "id=#{message_id}\nregistration_id=#{registration_id}"]))
+        stub_response([200, {}, "id=#{message_id}\nregistration_id=#{registration_id}"])
+        reponse = subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new)
         reponse.message_id.should == message_id
         reponse.registration_id.should == registration_id
       end
@@ -27,21 +31,21 @@ describe "SimpleGCM::Sender" do
     context "The message is not processed due errors" do
       %w(MissingRegistration InvalidRegistration MismatchSenderId NotRegistered MessageTooBig).each do |error|
         it "raises a SimpleGCM::Error::#{error}" do
-          reponse_stub = build_response_stub([200, {}, "Error=#{error}"])
-          expect {  subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new, &reponse_stub) }.to raise_error(SimpleGCM::Error.const_get(error))
+          stub_response([200, {}, "Error=#{error}"])
+          expect {  subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new) }.to raise_error(SimpleGCM::Error.const_get(error))
         end
       end
       it "raises a SimpleGCM::Error::AuthenticationError if return status is 401" do
-        reponse_stub = build_response_stub([401, {}, ""])
-        expect {  subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new, &reponse_stub) }.to raise_error(SimpleGCM::Error::AuthenticationError)
+        stub_response([401, {}, ""])
+        expect {  subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new) }.to raise_error(SimpleGCM::Error::AuthenticationError)
       end
       it "raises a SimpleGCM::Error::ServerUnavailable if return status is 500" do
-        reponse_stub = build_response_stub([500, {}, ""])
-        expect {  subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new, &reponse_stub) }.to raise_error(SimpleGCM::Error::ServerUnavailable)
+        stub_response([500, {}, ""])
+        expect {  subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new) }.to raise_error(SimpleGCM::Error::ServerUnavailable)
       end
       it "raises a SimpleGCM::Error::ServerUnavailable if return status is 503" do
-        reponse_stub = build_response_stub([503, {}, ""])
-        expect {  subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new, &reponse_stub) }.to raise_error(SimpleGCM::Error::ServerUnavailable)
+        stub_response([503, {}, ""])
+        expect {  subject.send(:registration_id => "fake_registration_id", :message => SimpleGCM::Message.new) }.to raise_error(SimpleGCM::Error::ServerUnavailable)
       end
     end
   end
@@ -57,8 +61,8 @@ describe "SimpleGCM::Sender" do
             { "message_id" => "1:08" }
           ]
         }.to_json
-        reponse_stub = build_response_stub([200, {"Content-Type" => "application/json"}, body])
-        multicast = subject.multicast(:to => "fake_registration_id", :message => SimpleGCM::Message.new, &reponse_stub)
+        stub_response([200, {"Content-Type" => "application/json"}, body])
+        multicast = subject.multicast(:to => "fake_registration_id", :message => SimpleGCM::Message.new)
         multicast.success.should == 1
         multicast.failure.should == 0
         multicast.canonical_ids.should == 0
@@ -79,8 +83,8 @@ describe "SimpleGCM::Sender" do
             { "error" => "NotRegistered"}
           ]
         }.to_json
-        reponse_stub = build_response_stub([200, {"Content-Type" => "application/json"}, body])
-        multicast = subject.multicast(:to => %w(a b c), :message => SimpleGCM::Message.new, &reponse_stub)
+        stub_response([200, {"Content-Type" => "application/json"}, body])
+        multicast = subject.multicast(:to => %w(a b c), :message => SimpleGCM::Message.new)
         multicast.success.should == 3
         multicast.failure.should == 3
         multicast.canonical_ids.should == 1
@@ -95,8 +99,8 @@ describe "SimpleGCM::Sender" do
     end
 
     it "when reponse status is 503, it returns a SimpleGCM::Multicast with Unavailable errors" do
-      reponse_stub = build_response_stub([503, {"Content-Type" => "application/json"}, ""])
-      multicast = subject.multicast(:to => %w(a b c), :message => SimpleGCM::Message.new, &reponse_stub)
+      stub_response([503, {"Content-Type" => "application/json"}, ""])
+      multicast = subject.multicast(:to => %w(a b c), :message => SimpleGCM::Message.new)
       multicast.success.should == 0
       multicast.failure.should == 3
       multicast.canonical_ids.should == 0
@@ -104,8 +108,8 @@ describe "SimpleGCM::Sender" do
     end
 
   it "when reponse status is 500, it returns a SimpleGCM::Multicast with Unavailable errors" do
-      reponse_stub = build_response_stub([500, {"Content-Type" => "application/json"}, ""])
-      multicast = subject.multicast(:to => %w(a b c), :message => SimpleGCM::Message.new, &reponse_stub)
+      stub_response([500, {"Content-Type" => "application/json"}, ""])
+      multicast = subject.multicast(:to => %w(a b c), :message => SimpleGCM::Message.new)
       multicast.success.should == 0
       multicast.failure.should == 3
       multicast.canonical_ids.should == 0
