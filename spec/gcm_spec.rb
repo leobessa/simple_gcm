@@ -53,14 +53,14 @@ describe "SimpleGCM::Sender" do
     context "The messages are processed successfully" do
       it "returns a SimpleGCM::Multicast with response content" do
         message_id = "1:08"
-        body = { "multicast_id" => 108,
+        body = MultiJson.dump({ "multicast_id" => 108,
           "success" => 1,
           "failure" => 0,
           "canonical_ids" => 0,
           "results" => [
             { "message_id" => "1:08" }
           ]
-        }.to_json
+        })
         stub_response([200, {"Content-Type" => "application/json"}, body])
         multicast = subject.multicast(:to => "fake_registration_id", :message => SimpleGCM::Message.new)
         multicast.success.should == 1
@@ -70,7 +70,7 @@ describe "SimpleGCM::Sender" do
       end
       it "returns a SimpleGCM::Multicast with response content and errors" do
         message_id = "1:08"
-        body = { "multicast_id" => 216,
+        body = MultiJson.dump({ "multicast_id" => 216,
           "success" => 3,
           "failure" => 3,
           "canonical_ids" => 1,
@@ -82,7 +82,7 @@ describe "SimpleGCM::Sender" do
             { "message_id" => "1:2342", "registration_id" => "32" },
             { "error" => "NotRegistered"}
           ]
-        }.to_json
+        })
         stub_response([200, {"Content-Type" => "application/json"}, body])
         multicast = subject.multicast(:to => %w(a b c), :message => SimpleGCM::Message.new)
         multicast.success.should == 3

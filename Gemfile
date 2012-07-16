@@ -12,3 +12,4 @@ group :development do
 end
 
 gem "faraday"
+gem 'multi_json'

@@ -3,7 +3,7 @@ module SimpleGCM
     def on_complete(env)
       case env[:status]
       when 200
-        env[:gcm_multicast_result] = MulticastResult.new(JSON.parse(env[:body],:symbolize_names => true))
+        env[:gcm_multicast_result] = MulticastResult.new(MultiJson.load(env[:body],:symbolize_keys => true))
       when 400
         raise Error::BadRequest, response_values(env)
       when 401

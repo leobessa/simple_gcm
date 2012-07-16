@@ -24,7 +24,7 @@ class SimpleGCM::MulticastResult
   end
 
   def to_json
-    self.inspect.to_json
+    MultiJson.dump(self.inspect)
   end
 
 end

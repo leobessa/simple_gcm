@@ -1,4 +1,4 @@
-require 'json'
+require 'multi_json'
 
 module SimpleGCM
   class Sender
@@ -41,7 +41,7 @@ module SimpleGCM
         response = multicast_connection.post SEND_PATH do |req|
           req.headers['Content-Type']  = 'application/json'
           req.headers['Authorization'] = "key=#{api_key}"
-          req.body = http_body.to_json
+          req.body = MultiJson.dump(http_body)
         end
         response.env[:gcm_multicast_result]
       rescue Error::ServerUnavailable => e
