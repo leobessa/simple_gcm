@@ -18,7 +18,7 @@ class SimpleGCM::Message
     end
   end
 
-  def to_json
-    MultiJson.dump(self.inspect)
+  def to_json(options={})
+    MultiJson.dump(self.inspect,options)
   end
 end
