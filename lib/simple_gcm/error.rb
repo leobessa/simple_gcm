@@ -36,5 +36,5 @@ module SimpleGCM::Error
   class MessageTooBig < BaseError; end
   class AuthenticationError < BaseError; end
   class ServerUnavailable < BaseError; end
-  class Unkown < BaseError; end
+  class Unknown < BaseError; end
 end

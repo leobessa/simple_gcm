@@ -8,7 +8,7 @@ module SimpleGCM
           if Error.constants.include?(values[:error].to_sym)
             raise Error.const_get(values[:error]), values
           else
-            raise Error::Unkown, values
+            raise Error::Unknown, values
           end
         else
           result = Result.new
@@ -21,7 +21,7 @@ module SimpleGCM
       when 500,503
         raise Error::ServerUnavailable, response_values(env)
       when 400...600
-        raise Error::Unkown, response_values(env)
+        raise Error::Unknown, response_values(env)
       end
     end
 

@@ -31,7 +31,7 @@ rescue SimpleGCM::Error::NotRegistered => e; puts e
 rescue SimpleGCM::Error::MessageTooBig => e; puts e
 rescue SimpleGCM::Error::AuthenticationError => e; puts e
 rescue SimpleGCM::Error::ServerUnavailable => e; puts e
-rescue SimpleGCM::Error::Unkown => e; puts e
+rescue SimpleGCM::Error::Unknown => e; puts e
 rescue Exception => e
 end
 ```
